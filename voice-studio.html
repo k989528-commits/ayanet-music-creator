@@ -7,7 +7,7 @@
 <title>AYANET MUSIC CREATOR - JZEN M</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#071426;color:white;font-family:Arial}
+body{margin:0;background:#071426;color:white;font-family:Arial,sans-serif}
 header{text-align:center;padding:24px;background:#102b4e;border-bottom:3px solid #d5ad51}
 h1{color:#e8c66d;margin:0;letter-spacing:2px}
 header p{color:#dce7f5}
@@ -20,8 +20,8 @@ button{padding:13px 17px;border:0;border-radius:8px;font-weight:bold;cursor:poin
 .primary{background:#e0b84f;color:#071426}
 .secondary{background:#294b70;color:white}
 .danger{background:#a83d48;color:white}
-button:disabled{opacity:.4}
-#status{color:#e8c66d;margin:15px 0;min-height:24px}
+button:disabled{opacity:.4;cursor:not-allowed}
+#status,#recordStatus{color:#e8c66d;margin:15px 0;min-height:24px}
 canvas{width:100%;height:90px;background:#071426;border-radius:8px}
 audio{width:100%;margin-top:12px}
 .small{font-size:13px;color:#b9c9dc;line-height:1.5}
@@ -29,11 +29,14 @@ footer{text-align:center;padding:25px;color:#9aacc1}
 </style>
 </head>
 <body>
+
 <header>
 <h1>AYANET MUSIC CREATOR</h1>
 <p>JZEN M — YOUR VOICE. YOUR SOUND. YOUR MUSIC.</p>
 </header>
+
 <main>
+
 <section class="panel">
 <h2>🎛️ SMOOTH INTRO BEAT STUDIO</h2>
 
@@ -76,34 +79,53 @@ footer{text-align:center;padding:25px;color:#9aacc1}
 <button class="danger" id="stop" disabled>■ STOP</button>
 <button class="secondary" id="download" disabled>⬇ DOWNLOAD WAV</button>
 
-<div id="status">Your next AYANET instrumental starts here.</div>
+<div id="status">Choose your sound and create a beat.</div>
 <canvas id="visual"></canvas>
 <audio id="preview" controls></audio>
-<p class="small">Your instrumental is created in your browser. Download it as a WAV file.</p>
 </section>
 
 <section class="panel">
-<h2>🎙️ JZEN M VOICE STUDIO</h2>
-<label>Select your vocal recording</label>
-<input type="file" id="vocal" accept="audio/*">
-<audio id="vocalPlayer" controls></audio>
-<p class="small">Your vocal stays on this device. It is not uploaded or automatically mixed yet.</p>
+<h2>🎙️ JZEN M VOICE RECORDING STUDIO</h2>
+<p>Record your own voice directly into AYANET.</p>
+
+<label>Microphone recording</label>
+<button class="primary" id="record">🔴 START RECORDING</button>
+<button class="danger" id="finish" disabled>■ STOP RECORDING</button>
+
+<div id="recordStatus">Your microphone is waiting.</div>
+
+<audio id="voicePreview" controls></audio>
+
+<button class="secondary" id="saveVoice" disabled>⬇ SAVE MY VOICE</button>
+
+<p class="small">
+Allow microphone access when your browser asks. Record a short sample of your singing or speaking. Your recording remains on your device and is not uploaded to our server.
+</p>
 </section>
+
+<section class="panel">
+<h2>🎵 JZEN M MUSIC PROJECT</h2>
+<p>Our next goal is to combine your recorded voice with your AYANET instrumental beats and build a complete song-production studio.</p>
+</section>
+
 </main>
+
 <footer>© AYANET MUSIC CREATOR · JZEN M</footer>
 
 <script>
 const $=id=>document.getElementById(id);
+
 let result=null,wavBlob=null,wavURL=null,player=null,playContext=null;
+
+let recorder=null;
+let microphone=null;
+let voiceChunks=[];
+let voiceBlob=null;
+let voiceURL=null;
 
 $("tempo").oninput=()=> $("tempoText").textContent=$("tempo").value+" BPM";
 $("bass").oninput=()=> $("bassText").textContent=$("bass").value+"%";
 $("drums").oninput=()=> $("drumText").textContent=$("drums").value+"%";
-
-$("vocal").onchange=()=>{
- const file=$("vocal").files[0];
- if(file)$("vocalPlayer").src=URL.createObjectURL(file);
-};
 
 function noise(ctx,seconds){
  const b=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*seconds),ctx.sampleRate);
@@ -148,7 +170,8 @@ function hat(ctx,out,t,vol){
 
 function tone(ctx,out,t,freq,duration,vol,type){
  const o=ctx.createOscillator(),g=ctx.createGain();
- o.type=type||"triangle";o.frequency.value=freq;
+ o.type=type||"triangle";
+ o.frequency.value=freq;
  g.gain.setValueAtTime(.001,t);
  g.gain.linearRampToValueAtTime(vol,t+.12);
  g.gain.setValueAtTime(vol,t+duration*.6);
@@ -191,7 +214,7 @@ function encodeWav(b){
 
 async function createBeat(){
  $("create").disabled=true;
- $("status").textContent="Composing your smooth introduction and beat...";
+ $("status").textContent="Composing your instrumental...";
 
  try{
   const bpm=Number($("tempo").value);
@@ -202,15 +225,17 @@ async function createBeat(){
   const drumLevel=Number($("drums").value)/100;
   const beat=60/bpm,step=beat/2;
   const duration=bars*4*beat;
-  const ctx=new OfflineAudioContext(2,Math.ceil((duration+1)*44100),44100);
 
+  const ctx=new OfflineAudioContext(2,Math.ceil((duration+1)*44100),44100);
   const master=ctx.createGain();
   const compressor=ctx.createDynamicsCompressor();
+
   compressor.threshold.value=-18;
   compressor.knee.value=18;
   compressor.ratio.value=3;
   compressor.attack.value=.025;
   compressor.release.value=.25;
+
   master.gain.setValueAtTime(.0001,0);
   master.gain.linearRampToValueAtTime(.72,2.5);
   compressor.connect(master);
@@ -218,6 +243,7 @@ async function createBeat(){
 
   const roots={afro:110,bongo:123.47,hiphop:98,gospel:130.81,dancehall:116.54};
   const root=roots[genre];
+
   const scales={
    energetic:[0,2,4,7,9],
    romantic:[0,3,5,8,10],
@@ -225,62 +251,61 @@ async function createBeat(){
    emotional:[0,3,5,7,10],
    relaxed:[0,2,5,7,9]
   };
+
   const scale=scales[mood];
 
-  // Soft musical opening: melody only, no opening kick.
   for(let i=0;i<4;i++){
    const t=i*beat;
-   const degree=scale[i%scale.length];
-   const freq=root*Math.pow(2,degree/12);
+   const freq=root*Math.pow(2,scale[i%scale.length]/12);
    tone(ctx,master,t,freq,beat*1.7,.045,"sine");
-   tone(ctx,master,t, freq*2,beat*1.2,.018,"triangle");
+   tone(ctx,master,t,freq*2,beat*1.2,.018,"triangle");
   }
 
-  // Gradual entrance followed by the complete rhythm.
   for(let bar=0;bar<bars;bar++){
    for(let s=0;s<8;s++){
-    const t=(bar*8+s)*step;
-    const second=bar*4*beat+s*step;
+    const t=bar*4*beat+s*step;
     const intro=bar<1;
     const build=bar===1;
 
     if(!intro){
      let k=false,sn=false;
+
      if(genre==="hiphop"){k=[0,3,5].includes(s);sn=[2,6].includes(s);}
      else if(genre==="gospel"){k=[0,4].includes(s);sn=[2,6].includes(s);}
      else if(genre==="dancehall"){k=[0,3,6].includes(s);sn=[2,6].includes(s);}
      else{k=[0,3,5,7].includes(s);sn=[2,6].includes(s);}
 
-     if(k)kick(ctx,master,second,.65*drumLevel*(build?.55:1));
-     if(sn&&(!build||s===6))snare(ctx,master,second,.20*drumLevel);
-     if(!build||s%2===0)hat(ctx,master,second,.075*drumLevel);
+     if(k)kick(ctx,master,t,.65*drumLevel*(build?.55:1));
+     if(sn&&(!build||s===6))snare(ctx,master,t,.20*drumLevel);
+     if(!build||s%2===0)hat(ctx,master,t,.075*drumLevel);
     }
 
     if(!intro&&s%2===0){
      const degree=scale[(bar*2+s/2)%scale.length];
-     const freq=root*Math.pow(2,degree/12);
-     tone(ctx,master,second,freq,step*.8,.045,"triangle");
+     tone(ctx,master,t,root*Math.pow(2,degree/12),step*.8,.045,"triangle");
     }
    }
 
    if(bar>=1){
-    const degree=scale[bar%scale.length];
-    const freq=root/2*Math.pow(2,degree/12);
+    const freq=root/2*Math.pow(2,scale[bar%scale.length]/12);
     bass(ctx,master,bar*4*beat,freq,beat*3,.19*bassLevel);
    }
   }
 
   result=await ctx.startRendering();
   wavBlob=encodeWav(result);
+
   if(wavURL)URL.revokeObjectURL(wavURL);
   wavURL=URL.createObjectURL(wavBlob);
+
   $("preview").src=wavURL;
   $("play").disabled=false;
   $("stop").disabled=false;
   $("download").disabled=false;
-  $("status").textContent="Your smooth AYANET beat is ready!";
+  $("status").textContent="Your AYANET instrumental is ready!";
+
  }catch(e){
-  $("status").textContent="Could not create beat: "+e.message;
+  $("status").textContent="Beat creation error: "+e.message;
  }finally{
   $("create").disabled=false;
  }
@@ -297,7 +322,7 @@ $("play").onclick=async()=>{
  player.connect(playContext.destination);
  player.onended=()=>{$("status").textContent="Playback finished.";};
  player.start();
- $("status").textContent="Playing your smooth AYANET instrumental...";
+ $("status").textContent="Playing your AYANET instrumental...";
 };
 
 $("stop").onclick=()=>{
@@ -309,7 +334,80 @@ $("download").onclick=()=>{
  if(!wavURL)return;
  const a=document.createElement("a");
  a.href=wavURL;
- a.download="AYANET-JZEN-M-SMOOTH-BEAT.wav";
+ a.download="AYANET-JZEN-M-BEAT.wav";
+ a.click();
+};
+
+// JZEN M microphone recording
+$("record").onclick=async()=>{
+ try{
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+   throw new Error("Microphone recording requires a secure HTTPS page.");
+  }
+
+  if(!window.MediaRecorder){
+   throw new Error("Your browser does not support audio recording.");
+  }
+
+  microphone=await navigator.mediaDevices.getUserMedia({audio:true});
+
+  let options={};
+  if(MediaRecorder.isTypeSupported("audio/webm;codecs=opus")){
+   options.mimeType="audio/webm;codecs=opus";
+  }else if(MediaRecorder.isTypeSupported("audio/mp4")){
+   options.mimeType="audio/mp4";
+  }
+
+  recorder=new MediaRecorder(microphone,options);
+  voiceChunks=[];
+
+  recorder.ondataavailable=e=>{
+   if(e.data&&e.data.size>0)voiceChunks.push(e.data);
+  };
+
+  recorder.onstop=()=>{
+   const type=recorder.mimeType||"audio/webm";
+   voiceBlob=new Blob(voiceChunks,{type:type});
+
+   if(voiceURL)URL.revokeObjectURL(voiceURL);
+   voiceURL=URL.createObjectURL(voiceBlob);
+
+   $("voicePreview").src=voiceURL;
+   $("saveVoice").disabled=false;
+   $("recordStatus").textContent="Recording finished! Listen to your voice.";
+   microphone.getTracks().forEach(track=>track.stop());
+   microphone=null;
+  };
+
+  recorder.start();
+  $("record").disabled=true;
+  $("finish").disabled=false;
+  $("recordStatus").textContent="Recording JZEN M... Speak or sing now!";
+
+ }catch(error){
+  $("recordStatus").textContent="Microphone problem: "+error.message;
+  if(microphone){
+   microphone.getTracks().forEach(track=>track.stop());
+   microphone=null;
+  }
+ }
+};
+
+$("finish").onclick=()=>{
+ if(recorder&&recorder.state!=="inactive"){
+  recorder.stop();
+  $("finish").disabled=true;
+  $("record").disabled=false;
+ }
+};
+
+$("saveVoice").onclick=()=>{
+ if(!voiceBlob||!voiceURL)return;
+
+ const extension=voiceBlob.type.includes("mp4")?"m4a":"webm";
+ const a=document.createElement("a");
+ a.href=voiceURL;
+ a.download="JZEN-M-VOICE-RECORDING."+extension;
  a.click();
 };
 </script>
