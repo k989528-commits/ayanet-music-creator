@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JZEN M | AYANET Voice Studio</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#071326;color:#fff;font-family:Arial,sans-serif;padding:25px}
+.container{max-width:760px;margin:auto}
+header{text-align:center;padding:25px 10px}
+h1{color:#e8bd55;font-size:30px}
+.subtitle{color:#b9c5d7}
+.panel{background:#10213a;padding:22px;border-radius:15px;margin:18px 0}
+h2{color:#e8bd55}
+label{display:block;margin:15px 0 8px}
+input,select,button{width:100%;padding:13px;border-radius:8px;border:0;font-size:15px}
+input,select{background:#eaf0f8;color:#10213a}
+button{background:#d9ad48;color:#071326;font-weight:bold;cursor:pointer;margin-top:15px}
+button:disabled{opacity:.5}
+audio{width:100%;margin-top:15px}
+.status{color:#e8bd55;margin-top:15px}
+footer{text-align:center;color:#8fa0b8;padding:20px}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>AYANET MUSIC CREATOR</h1>
+<div class="subtitle">JZEN M — THE VOICE BEHIND THE MUSIC</div>
+</header>
+
+<div class="panel">
+<h2>🎙️ JZEN M Voice Studio</h2>
+<p>Upload your own vocal recording and prepare it for your music.</p>
+
+<label for="vocal">Choose your vocal recording</label>
+<input id="vocal" type="file" accept="audio/*">
+
+<audio id="preview" controls hidden></audio>
+
+<div id="fileStatus" class="status">No recording selected.</div>
+</div>
+
+<div class="panel">
+<h2>🎵 Music Direction</h2>
+
+<label for="genre">Music genre</label>
+<select id="genre">
+<option>Afrobeats</option>
+<option>Bongo Flava</option>
+<option>Afro-pop</option>
+<option>Hip-hop</option>
+<option>Gospel</option>
+<option>Dancehall</option>
+</select>
+
+<label for="mood">Song mood</label>
+<select id="mood">
+<option>Inspirational</option>
+<option>Romantic</option>
+<option>Emotional</option>
+<option>Energetic</option>
+<option>Relaxed</option>
+</select>
+
+<label for="tempo">Tempo</label>
+<select id="tempo">
+<option value="80">Slow — 80 BPM</option>
+<option value="100" selected>Medium — 100 BPM</option>
+<option value="120">Fast — 120 BPM</option>
+</select>
+
+<button id="prepare">Prepare My Vocal</button>
+<div id="result" class="status"></div>
+</div>
+
+<footer>© AYANET MUSIC CREATOR · JZEN M</footer>
+</div>
+
+<script>
+const vocal = document.getElementById("vocal");
+const preview = document.getElementById("preview");
+const fileStatus = document.getElementById("fileStatus");
+const result = document.getElementById("result");
+
+let selectedAudio = null;
+
+vocal.addEventListener("change", () => {
+  const file = vocal.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith("audio/")) {
+    fileStatus.textContent = "Please choose an audio file.";
+    return;
+  }
+
+  selectedAudio = file;
+  preview.src = URL.createObjectURL(file);
+  preview.hidden = false;
+  fileStatus.textContent = "Selected: " + file.name;
+  result.textContent = "";
+});
+
+document.getElementById("prepare").addEventListener("click", () => {
+  if (!selectedAudio) {
+    result.textContent = "Please upload your vocal recording first.";
+    return;
+  }
+
+  const genre = document.getElementById("genre").value;
+  const mood = document.getElementById("mood").value;
+  const tempo = document.getElementById("tempo").value;
+
+  result.textContent =
+    "Vocal loaded successfully! Genre: " + genre +
+    " | Mood: " + mood + " | Tempo: " + tempo +
+    " BPM. Ready for the next production stage.";
+});
+</script>
+</body>
+</html>
