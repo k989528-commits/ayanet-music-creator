@@ -3,42 +3,39 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AYANET MUSIC CREATOR | JZEN M Studio</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AYANET MUSIC CREATOR - JZEN M</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#071426;color:white;font-family:Arial,sans-serif}
-header{background:#102b4e;padding:22px;text-align:center;border-bottom:3px solid #d5ad51}
-header h1{margin:0;color:#e8c66d;letter-spacing:2px}
+body{margin:0;background:#071426;color:#fff;font-family:Arial,sans-serif}
+header{text-align:center;padding:25px;background:#102b4e;border-bottom:3px solid #d5ad51}
+h1{color:#e8c66d;letter-spacing:2px;margin:0}
 header p{color:#dce7f5}
-main{max-width:850px;margin:25px auto;padding:15px}
-.panel{background:#10233c;border:1px solid #294361;border-radius:15px;padding:20px;margin-bottom:18px}
+main{max-width:900px;margin:auto;padding:15px}
+.panel{background:#10233c;padding:20px;border:1px solid #294361;border-radius:14px;margin:18px 0}
 h2{color:#e8c66d;margin-top:0}
-label{display:block;margin:15px 0 7px;color:#dce7f5}
-select,input{width:100%;padding:13px;border-radius:8px;border:1px solid #52677f;background:#071426;color:white;font-size:16px}
-button{padding:13px 18px;border:0;border-radius:8px;font-weight:bold;font-size:15px;cursor:pointer;margin:7px 5px 7px 0}
+label{display:block;margin:16px 0 7px;color:#dce7f5}
+select,input{width:100%;padding:13px;border-radius:8px;background:#071426;color:white;border:1px solid #52677f;font-size:16px}
+button{padding:13px 17px;border:0;border-radius:8px;font-weight:bold;cursor:pointer;margin:7px 5px 7px 0}
 .primary{background:#e0b84f;color:#071426}
 .secondary{background:#294b70;color:white}
 .danger{background:#a83d48;color:white}
-button:disabled{opacity:.4;cursor:not-allowed}
-#status{color:#e8c66d;min-height:24px;margin-top:12px}
-#visual{width:100%;height:95px;background:#071426;border-radius:9px;margin-top:15px}
-.small{font-size:13px;color:#b9c9dc;line-height:1.5}
+button:disabled{opacity:.4}
+#status{color:#e8c66d;margin:15px 0;min-height:24px}
+canvas{width:100%;height:100px;background:#071426;border-radius:8px}
 audio{width:100%;margin-top:12px}
-footer{text-align:center;color:#9aacc1;padding:20px}
+.small{font-size:13px;color:#b9c9dc;line-height:1.5}
+footer{text-align:center;color:#9aacc1;padding:25px}
 </style>
 </head>
 <body>
-
 <header>
 <h1>AYANET MUSIC CREATOR</h1>
 <p>JZEN M — YOUR VOICE. YOUR SOUND. YOUR MUSIC.</p>
 </header>
-
 <main>
-
 <section class="panel">
-<h2>🎛️ Create Your Beat</h2>
+<h2>🎛️ PROFESSIONAL BEAT STUDIO</h2>
 
 <label>Music Genre</label>
 <select id="genre">
@@ -59,282 +56,280 @@ footer{text-align:center;color:#9aacc1;padding:20px}
 </select>
 
 <label>Tempo: <span id="tempoText">100 BPM</span></label>
-<input id="tempo" type="range" min="70" max="150" value="100">
+<input id="tempo" type="range" min="70" max="160" value="100">
 
-<label>Beat Length</label>
-<select id="bars">
-<option value="8">8 bars — Short preview</option>
-<option value="16" selected>16 bars — Standard</option>
-<option value="32">32 bars — Longer beat</option>
+<label>Arrangement</label>
+<select id="arrangement">
+<option value="8">Short preview</option>
+<option value="16" selected>Song section</option>
+<option value="32">Extended arrangement</option>
 </select>
 
-<button class="primary" id="create">✨ CREATE MY BEAT</button>
+<label>Bass intensity: <span id="bassText">70%</span></label>
+<input id="bass" type="range" min="10" max="100" value="70">
+
+<label>Drum intensity: <span id="drumText">75%</span></label>
+<input id="drums" type="range" min="10" max="100" value="75">
+
+<button class="primary" id="create">✨ CREATE NEW BEAT</button>
 <button class="secondary" id="play" disabled>▶ PLAY</button>
 <button class="danger" id="stop" disabled>■ STOP</button>
 <button class="secondary" id="download" disabled>⬇ DOWNLOAD WAV</button>
 
-<div id="status">Choose your sound and create your first beat.</div>
+<div id="status">Choose your sound and create a beat.</div>
 <canvas id="visual"></canvas>
 <audio id="preview" controls></audio>
-<p class="small">Your beat is generated locally in your browser. Download the WAV to keep it.</p>
+<p class="small">Generated in your browser. Download your instrumental as a WAV file.</p>
 </section>
 
 <section class="panel">
-<h2>🎙️ JZEN M Voice Studio</h2>
-<label>Choose your vocal recording</label>
+<h2>🎙️ JZEN M VOICE STUDIO</h2>
+<label>Select your vocal recording</label>
 <input type="file" id="vocal" accept="audio/*">
 <audio id="vocalPlayer" controls></audio>
-<p class="small">Your vocal is previewed locally on this device. It is not uploaded or stored on our server.</p>
+<p class="small">Your vocal recording stays on your device in this version. It is not uploaded or automatically mixed with the beat yet.</p>
 </section>
-
-<section class="panel">
-<h2>🎵 Our Next Studio Upgrade</h2>
-<p>Next we'll work toward combining your own voice with the beats, then building a proper song-production workflow.</p>
-</section>
-
 </main>
-
 <footer>© AYANET MUSIC CREATOR · JZEN M</footer>
 
 <script>
-const $ = id => document.getElementById(id);
+const $=id=>document.getElementById(id);
+let buffer=null,blob=null,url=null,player=null,playContext=null;
+let animation=null;
 
-let audioContext = null;
-let renderedBuffer = null;
-let beatBlob = null;
-let beatURL = null;
-let sourceNode = null;
+$("tempo").oninput=()=> $("tempoText").textContent=$("tempo").value+" BPM";
+$("bass").oninput=()=> $("bassText").textContent=$("bass").value+"%";
+$("drums").oninput=()=> $("drumText").textContent=$("drums").value+"%";
 
-$("tempo").addEventListener("input",()=>{
-  $("tempoText").textContent=$("tempo").value+" BPM";
-});
+$("vocal").onchange=()=>{
+ const f=$("vocal").files[0];
+ if(f)$("vocalPlayer").src=URL.createObjectURL(f);
+};
 
-$("vocal").addEventListener("change",()=>{
-  const file=$("vocal").files[0];
-  if(!file)return;
-  $("vocalPlayer").src=URL.createObjectURL(file);
-});
-
-function makeBuffer(ctx,channels,length,sampleRate){
-  return ctx.createBuffer(channels,length,sampleRate);
+function noiseBuffer(ctx,duration){
+ const b=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*duration),ctx.sampleRate);
+ const d=b.getChannelData(0);
+ for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+ return b;
 }
 
-function addKick(ctx,buffer,time,volume=0.9){
-  const osc=ctx.createOscillator();
-  const gain=ctx.createGain();
-  osc.type="sine";
-  osc.frequency.setValueAtTime(130,time);
-  osc.frequency.exponentialRampToValueAtTime(42,time+0.16);
-  gain.gain.setValueAtTime(volume,time);
-  gain.gain.exponentialRampToValueAtTime(0.001,time+0.25);
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-  osc.start(time);
-  osc.stop(time+0.26);
+function kick(ctx,t,volume){
+ const o=ctx.createOscillator(),g=ctx.createGain();
+ o.type="sine";
+ o.frequency.setValueAtTime(145,t);
+ o.frequency.exponentialRampToValueAtTime(38,t+.19);
+ g.gain.setValueAtTime(volume,t);
+ g.gain.exponentialRampToValueAtTime(.001,t+.28);
+ o.connect(g);g.connect(ctx.destination);
+ o.start(t);o.stop(t+.3);
 }
 
-function addSnare(ctx,time,volume=0.24){
-  const length=Math.floor(ctx.sampleRate*0.16);
-  const buffer=ctx.createBuffer(1,length,ctx.sampleRate);
-  const data=buffer.getChannelData(0);
-  for(let i=0;i<length;i++){
-    data[i]=(Math.random()*2-1)*(1-i/length);
+function snare(ctx,t,volume){
+ const n=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();
+ n.buffer=noiseBuffer(ctx,.19);
+ f.type="bandpass";f.frequency.value=1800;
+ g.gain.setValueAtTime(volume,t);
+ g.gain.exponentialRampToValueAtTime(.001,t+.17);
+ n.connect(f);f.connect(g);g.connect(ctx.destination);
+ n.start(t);n.stop(t+.2);
+ const o=ctx.createOscillator(),og=ctx.createGain();
+ o.type="triangle";o.frequency.value=180;
+ og.gain.setValueAtTime(volume*.6,t);
+ og.gain.exponentialRampToValueAtTime(.001,t+.1);
+ o.connect(og);og.connect(ctx.destination);
+ o.start(t);o.stop(t+.11);
+}
+
+function hat(ctx,t,volume){
+ const n=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();
+ n.buffer=noiseBuffer(ctx,.055);
+ f.type="highpass";f.frequency.value=7500;
+ g.gain.setValueAtTime(volume,t);
+ g.gain.exponentialRampToValueAtTime(.001,t+.05);
+ n.connect(f);f.connect(g);g.connect(ctx.destination);
+ n.start(t);n.stop(t+.06);
+}
+
+function bass(ctx,t,freq,duration,volume){
+ const o=ctx.createOscillator(),g=ctx.createGain(),filter=ctx.createBiquadFilter();
+ o.type="sawtooth";
+ o.frequency.value=freq;
+ filter.type="lowpass";filter.frequency.value=210;
+ g.gain.setValueAtTime(.001,t);
+ g.gain.linearRampToValueAtTime(volume,t+.025);
+ g.gain.exponentialRampToValueAtTime(.001,t+duration);
+ o.connect(filter);filter.connect(g);g.connect(ctx.destination);
+ o.start(t);o.stop(t+duration+.02);
+}
+
+function note(ctx,t,freq,duration,volume,type="triangle"){
+ const o=ctx.createOscillator(),g=ctx.createGain();
+ o.type=type;o.frequency.value=freq;
+ g.gain.setValueAtTime(.001,t);
+ g.gain.linearRampToValueAtTime(volume,t+.035);
+ g.gain.exponentialRampToValueAtTime(.001,t+duration);
+ o.connect(g);g.connect(ctx.destination);
+ o.start(t);o.stop(t+duration+.03);
+}
+
+function chord(ctx,t,root,duration,volume){
+ [1,1.25,1.5].forEach((ratio,i)=>{
+  note(ctx,t,root*ratio,duration,volume,"sine");
+ });
+}
+
+function wav(buffer){
+ const channels=buffer.numberOfChannels,frames=buffer.length,rate=buffer.sampleRate;
+ const bytes=frames*channels*2;
+ const ab=new ArrayBuffer(44+bytes),v=new DataView(ab);
+ function str(p,s){for(let i=0;i<s.length;i++)v.setUint8(p+i,s.charCodeAt(i));}
+ str(0,"RIFF");v.setUint32(4,36+bytes,true);str(8,"WAVE");
+ str(12,"fmt ");v.setUint32(16,16,true);
+ v.setUint16(20,1,true);v.setUint16(22,channels,true);
+ v.setUint32(24,rate,true);v.setUint32(28,rate*channels*2,true);
+ v.setUint16(32,channels*2,true);v.setUint16(34,16,true);
+ str(36,"data");v.setUint32(40,bytes,true);
+ let p=44;
+ for(let i=0;i<frames;i++){
+  for(let c=0;c<channels;c++){
+   const x=Math.max(-1,Math.min(1,buffer.getChannelData(c)[i]));
+   v.setInt16(p,x<0?x*32768:x*32767,true);p+=2;
   }
-  const noise=ctx.createBufferSource();
-  const filter=ctx.createBiquadFilter();
-  const gain=ctx.createGain();
-  noise.buffer=buffer;
-  filter.type="highpass";
-  filter.frequency.value=1200;
-  gain.gain.setValueAtTime(volume,time);
-  gain.gain.exponentialRampToValueAtTime(0.001,time+0.16);
-  noise.connect(filter);
-  filter.connect(gain);
-  gain.connect(ctx.destination);
-  noise.start(time);
+ }
+ return new Blob([ab],{type:"audio/wav"});
 }
 
-function addHat(ctx,time,volume=0.08){
-  const length=Math.floor(ctx.sampleRate*0.045);
-  const buffer=ctx.createBuffer(1,length,ctx.sampleRate);
-  const data=buffer.getChannelData(0);
-  for(let i=0;i<length;i++)data[i]=Math.random()*2-1;
-  const noise=ctx.createBufferSource();
-  const filter=ctx.createBiquadFilter();
-  const gain=ctx.createGain();
-  noise.buffer=buffer;
-  filter.type="highpass";
-  filter.frequency.value=7000;
-  gain.gain.setValueAtTime(volume,time);
-  gain.gain.exponentialRampToValueAtTime(0.001,time+0.045);
-  noise.connect(filter);
-  filter.connect(gain);
-  gain.connect(ctx.destination);
-  noise.start(time);
-}
+async function create(){
+ $("create").disabled=true;
+ $("status").textContent="Building your new instrumental...";
+ try{
+  const bpm=Number($("tempo").value);
+  const bars=Number($("arrangement").value);
+  const genre=$("genre").value,mood=$("mood").value;
+  const bassLevel=Number($("bass").value)/100;
+  const drumLevel=Number($("drums").value)/100;
+  const beat=60/bpm,step=beat/2;
+  const duration=bars*4*beat;
+  const rate=44100;
+  const ctx=new OfflineAudioContext(2,Math.ceil((duration+1)*rate),rate);
 
-function addTone(ctx,time,frequency,duration,volume,type="triangle"){
-  const osc=ctx.createOscillator();
-  const gain=ctx.createGain();
-  osc.type=type;
-  osc.frequency.value=frequency;
-  gain.gain.setValueAtTime(0.001,time);
-  gain.gain.linearRampToValueAtTime(volume,time+0.015);
-  gain.gain.exponentialRampToValueAtTime(0.001,time+duration);
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-  osc.start(time);
-  osc.stop(time+duration+0.02);
-}
+  const compressor=ctx.createDynamicsCompressor();
+  compressor.threshold.value=-16;
+  compressor.knee.value=20;
+  compressor.ratio.value=3;
+  compressor.attack.value=.01;
+  compressor.release.value=.2;
+  const master=ctx.createGain();
+  master.gain.value=.8;
+  compressor.connect(master);
+  master.connect(ctx.destination);
 
-function encodeWav(buffer){
-  const channels=buffer.numberOfChannels;
-  const sampleRate=buffer.sampleRate;
-  const frames=buffer.length;
-  const bytes=frames*channels*2;
-  const out=new ArrayBuffer(44+bytes);
-  const view=new DataView(out);
-  function writeString(offset,string){
-    for(let i=0;i<string.length;i++)view.setUint8(offset+i,string.charCodeAt(i));
-  }
-  writeString(0,"RIFF");
-  view.setUint32(4,36+bytes,true);
-  writeString(8,"WAVE");
-  writeString(12,"fmt ");
-  view.setUint32(16,16,true);
-  view.setUint16(20,1,true);
-  view.setUint16(22,channels,true);
-  view.setUint32(24,sampleRate,true);
-  view.setUint32(28,sampleRate*channels*2,true);
-  view.setUint16(32,channels*2,true);
-  view.setUint16(34,16,true);
-  writeString(36,"data");
-  view.setUint32(40,bytes,true);
-  let offset=44;
-  for(let i=0;i<frames;i++){
-    for(let c=0;c<channels;c++){
-      let sample=Math.max(-1,Math.min(1,buffer.getChannelData(c)[i]));
-      view.setInt16(offset,sample<0?sample*32768:sample*32767,true);
-      offset+=2;
-    }
-  }
-  return new Blob([out],{type:"audio/wav"});
-}
+  // Route all instruments through the master compressor.
+  const originalDestination=ctx.destination;
+  Object.defineProperty(ctx,"destination",{value:compressor});
 
-async function createBeat(){
-  $("create").disabled=true;
-  $("status").textContent="Creating your instrumental beat...";
-
-  try{
-    const tempo=Number($("tempo").value);
-    const bars=Number($("bars").value);
-    const genre=$("genre").value;
-    const mood=$("mood").value;
-    const beatDuration=60/tempo;
-    const step=beatDuration/2;
-    const duration=bars*4*beatDuration;
-    const sampleRate=44100;
-
-    const offline=new OfflineAudioContext(2,Math.ceil((duration+1)*sampleRate),sampleRate);
-
-    const master=offline.createGain();
-    master.gain.value=0.72;
-    master.connect(offline.destination);
-
-    const oldDestination=offline.destination;
-    const originalConnect=AudioNode.prototype.connect;
-
-    // Generate rhythm and musical notes on the offline timeline.
-    const root={
-      afro:110,bongo:123.47,hiphop:98,gospel:130.81,dancehall:116.54
-    }[genre];
-
-    const scale=mood==="emotional"?[0,3,5,7,10]:
-      mood==="romantic"?[0,3,5,8,10]:
-      mood==="inspirational"?[0,2,4,7,9]:
-      [0,2,5,7,9];
-
-    for(let bar=0;bar<bars;bar++){
-      for(let beat=0;beat<8;beat++){
-        const time=(bar*8+beat)*step;
-        const mainBeat=beat%2===0;
-
-        if(genre==="hiphop"){
-          if(beat===0||beat===3||beat===5)addKick(offline,time,0.95);
-          if(beat===2||beat===6)addSnare(offline,time,0.32);
-        }else if(genre==="gospel"){
-          if(beat===0||beat===4)addKick(offline,time,0.85);
-          if(beat===2||beat===6)addSnare(offline,time,0.22);
-        }else{
-          if(beat===0||beat===3||beat===5||beat===7)addKick(offline,time,0.85);
-          if(beat===2||beat===6)addSnare(offline,time,0.25);
-        }
-
-        addHat(offline,time,mainBeat?0.07:0.11);
-
-        if(beat%2===0){
-          const note=scale[(bar+beat/2)%scale.length];
-          const frequency=root*Math.pow(2,note/12);
-          addTone(offline,time,frequency,0.22,0.09,"triangle");
-        }
-      }
-
-      const chordRoot=root*Math.pow(2,scale[bar%scale.length]/12);
-      const chordNotes=[1,1.25,1.5];
-      chordNotes.forEach((ratio,index)=>{
-        addTone(offline,bar*4*beatDuration,chordRoot*ratio,
-          beatDuration*2,0.035,"sine");
-      });
-    }
-
-    renderedBuffer=await offline.startRendering();
-    beatBlob=encodeWav(renderedBuffer);
-
-    if(beatURL)URL.revokeObjectURL(beatURL);
-    beatURL=URL.createObjectURL(beatBlob);
-    $("preview").src=beatURL;
-    $("play").disabled=false;
-    $("stop").disabled=false;
-    $("download").disabled=false;
-    $("status").textContent="Your beat is ready! Press PLAY to listen.";
-  }catch(error){
-    $("status").textContent="Could not create beat: "+error.message;
-  }finally{
-    $("create").disabled=false;
-  }
-}
-
-$("create").addEventListener("click",createBeat);
-
-$("play").addEventListener("click",async()=>{
-  if(!renderedBuffer)return;
-  if(audioContext)await audioContext.close();
-  audioContext=new AudioContext();
-  sourceNode=audioContext.createBufferSource();
-  sourceNode.buffer=renderedBuffer;
-  sourceNode.connect(audioContext.destination);
-  sourceNode.start();
-  $("status").textContent="Playing your beat...";
-  sourceNode.onended=()=>{
-    $("status").textContent="Playback finished. Your beat is ready.";
+  const roots={afro:110,bongo:123.47,hiphop:98,gospel:130.81,dancehall:116.54};
+  const root=roots[genre];
+  const scales={
+   energetic:[0,2,4,7,9],
+   romantic:[0,3,5,8,10],
+   inspirational:[0,2,4,7,9],
+   emotional:[0,3,5,7,10],
+   relaxed:[0,2,5,7,9]
   };
-});
+  const scale=scales[mood];
 
-$("stop").addEventListener("click",()=>{
-  if(sourceNode){
-    try{sourceNode.stop()}catch(e){}
-    sourceNode=null;
+  for(let bar=0;bar<bars;bar++){
+   const section=bar%8;
+   const intro=bar===0;
+   const chorus=section>=4;
+   for(let s=0;s<8;s++){
+    const t=(bar*8+s)*step;
+    const strong= s%2===0;
+    let k=false, sn=false;
+
+    if(genre==="hiphop"){
+     k=[0,3,5].includes(s);
+     sn=[2,6].includes(s);
+    }else if(genre==="gospel"){
+     k=[0,4].includes(s);
+     sn=[2,6].includes(s);
+    }else if(genre==="dancehall"){
+     k=[0,3,6].includes(s);
+     sn=[2,6].includes(s);
+    }else if(genre==="bongo"){
+     k=[0,3,5].includes(s);
+     sn=[2,6].includes(s);
+    }else{
+     k=[0,3,5,7].includes(s);
+     sn=[2,6].includes(s);
+    }
+
+    if(!intro||s===0){
+     if(k)kick(ctx,t,.72*drumLevel);
+     if(sn)snare(ctx,t,.23*drumLevel);
+    }
+    if(!intro||s<4)hat(ctx,t,(strong?.065:.105)*drumLevel);
+
+    if(s===0||s===4){
+     const degree=scale[(bar+(s===4?2:0))%scale.length];
+     bass(ctx,t,root/2*Math.pow(2,degree/12),beat*.8,.22*bassLevel);
+    }
+    if(!intro&&s%2===0){
+     const degree=scale[(bar*2+s/2)%scale.length];
+     const freq=root*Math.pow(2,degree/12);
+     const melodic=chorus?1.5:1;
+     note(ctx,t,freq,step*.8,.075*melodic,"triangle");
+     if(genre==="gospel"||genre==="bongo"){
+      note(ctx,t,freq*2,step*.55,.025,"sine");
+     }
+    }
+   }
+
+   const chordRoot=root*Math.pow(2,scale[bar%scale.length]/12);
+   if(!intro)chord(ctx,bar*4*beat,chordRoot,beat*3,.035);
   }
-  $("status").textContent="Playback stopped.";
-});
 
-$("download").addEventListener("click",()=>{
-  if(!beatBlob)return;
-  const link=document.createElement("a");
-  link.href=beatURL;
-  link.download="AYANET-JZEN-M-BEAT.wav";
-  link.click();
-});
+  buffer=await ctx.startRendering();
+  blob=wav(buffer);
+  if(url)URL.revokeObjectURL(url);
+  url=URL.createObjectURL(blob);
+  $("preview").src=url;
+  $("play").disabled=false;
+  $("stop").disabled=false;
+  $("download").disabled=false;
+  $("status").textContent="Your new AYANET instrumental is ready!";
+ }catch(e){
+  $("status").textContent="Beat creation error: "+e.message;
+ }finally{
+  $("create").disabled=false;
+ }
+}
+
+$("create").onclick=create;
+
+$("play").onclick=()=>{
+ if(!buffer)return;
+ if(playContext)playContext.close();
+ playContext=new AudioContext();
+ player=playContext.createBufferSource();
+ player.buffer=buffer;
+ player.connect(playContext.destination);
+ player.start();
+ $("status").textContent="Playing your AYANET beat...";
+ player.onended=()=>{$("status").textContent="Playback finished.";};
+};
+
+$("stop").onclick=()=>{
+ if(player){try{player.stop()}catch(e){}player=null;}
+ $("status").textContent="Playback stopped.";
+};
+
+$("download").onclick=()=>{
+ if(!url)return;
+ const a=document.createElement("a");
+ a.href=url;a.download="AYANET-JZEN-M-PRO-BEAT.wav";a.click();
+};
 </script>
 </body>
 </html>
