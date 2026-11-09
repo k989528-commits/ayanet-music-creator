@@ -1,0 +1,574 @@
+﻿
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AYANET MUSIC CREATOR</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#071426;color:#fff;font-family:Arial,sans-serif}
+header{background:#0c203b;padding:25px 15px;text-align:center;border-bottom:2px solid #d7ad45}
+header h1{color:#e6bd55;margin:0;font-size:28px}
+header p{color:#b9c8dc}
+main{max-width:1000px;margin:auto;padding:15px}
+section{background:#102542;border:1px solid #294463;border-radius:13px;padding:18px;margin:16px 0}
+h2{color:#e6bd55;margin-top:0}
+h3{color:#e4c36d}
+label{display:block;margin:12px 0 6px;color:#cbd8e8}
+input,select,textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #49617e;background:#071426;color:white;font-size:15px}
+textarea{min-height:100px}
+button{background:#d7ad45;color:#071426;border:0;padding:12px 15px;border-radius:8px;font-weight:bold;cursor:pointer;margin:6px 5px 5px 0}
+.secondary{background:#294463;color:white}
+.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.status{color:#9fe3b0;margin-top:12px;min-height:20px}
+.small{color:#afc0d5;font-size:13px;line-height:1.5}
+.track{background:#071426;padding:13px;border-radius:9px;margin:12px 0}
+.saved-item{border-top:1px solid #294463;padding:10px 0}
+footer{text-align:center;padding:25px;color:#8fa4bd}
+</style>
+</head>
+<body>
+
+<header>
+<h1>AYANET MUSIC CREATOR</h1>
+<p>Write • Generate • Record • Mix • Create</p>
+</header>
+
+<main>
+
+<section>
+<h2>1. SONGWRITING STUDIO</h2>
+<div class="row">
+<div>
+<label>Song title</label>
+<input id="songTitle" placeholder="My new song">
+</div>
+<div>
+<label>Music style</label>
+<select id="genre">
+<option>Afrobeat</option><option>Benga</option><option>Gospel</option>
+<option>Amapiano</option><option>Hip-hop</option><option>R&B</option>
+<option>Reggae</option><option>Pop</option><option>Traditional African</option>
+</select>
+</div>
+<div>
+<label>Mood</label>
+<select id="mood">
+<option>Happy</option><option>Romantic</option><option>Emotional</option>
+<option>Energetic</option><option>Inspirational</option>
+<option>Peaceful</option><option>Celebration</option>
+</select>
+</div>
+</div>
+<label>Your lyrics</label>
+<textarea id="lyrics" placeholder="Write your lyrics here..."></textarea>
+<button onclick="saveSong()">SAVE SONG IDEA</button>
+<div id="songStatus" class="status"></div>
+<h3>My saved songs</h3>
+<div id="savedSongs" class="small"></div>
+</section>
+
+<section>
+<h2>2. AUTOMATIC MUSIC GENERATOR</h2>
+<p class="small">AYANET creates the drums, bassline and melody automatically. You do not need to program musical notes or drum patterns.</p>
+
+<div class="row">
+<div>
+<label>Music style</label>
+<select id="beatGenre">
+<option>Afrobeat</option><option>Benga</option><option>Gospel</option>
+<option>Amapiano</option><option>Hip-hop</option><option>R&B</option>
+<option>Reggae</option><option>Pop</option><option>Traditional African</option>
+</select>
+</div>
+<div>
+<label>Tempo (BPM)</label>
+<input id="bpm" type="number" min="60" max="180" value="110">
+</div>
+<div>
+<label>Energy</label>
+<select id="energy">
+<option value="1">Smooth</option>
+<option value="2" selected>Balanced</option>
+<option value="3">Powerful</option>
+</select>
+</div>
+<div>
+<label>Melody variation</label>
+<select id="variation">
+<option value="1">Simple</option>
+<option value="2" selected>Balanced</option>
+<option value="3">Creative</option>
+</select>
+</div>
+</div>
+
+<button onclick="generateInstrumental()">GENERATE MY INSTRUMENTAL</button>
+<button class="secondary" onclick="playInstrumental()">PLAY INSTRUMENTAL</button>
+<button class="secondary" onclick="stopInstrumental()">STOP</button>
+<button class="secondary" onclick="downloadInstrumental()">DOWNLOAD WAV</button>
+<div id="generatorStatus" class="status">Ready to create your instrumental.</div>
+<p class="small">This version uses browser-generated drum, bass and melody sounds. It is an automatic music-making prototype, not yet a connected AI engine that generates realistic full songs.</p>
+</section>
+
+<section>
+<h2>3. YOUR VOICE RECORDER</h2>
+<button id="recordBtn" onclick="startRecording()">START RECORDING</button>
+<button id="stopRecordBtn" class="secondary" onclick="stopRecording()" disabled>STOP RECORDING</button>
+<div id="recordStatus" class="status"></div>
+<audio id="recordedAudio" controls style="display:none;width:100%"></audio>
+<a id="downloadVoice" style="display:none;color:#e6bd55" download="ayanet-voice.webm">Download recording</a>
+</section>
+
+<section>
+<h2>4. MELODY KEYBOARD</h2>
+<p class="small">Try individual notes if you want to explore your own musical ideas.</p>
+<div class="row">
+<button onclick="playNote(261.63)">C</button>
+<button onclick="playNote(293.66)">D</button>
+<button onclick="playNote(329.63)">E</button>
+<button onclick="playNote(349.23)">F</button>
+<button onclick="playNote(392)">G</button>
+<button onclick="playNote(440)">A</button>
+<button onclick="playNote(493.88)">B</button>
+<button onclick="playNote(523.25)">C+</button>
+</div>
+</section>
+
+<section>
+<h2>5. STUDIO MIXER</h2>
+<p class="small">Combine your voice, an instrumental file and the instrumental generated by AYANET.</p>
+
+<div class="track">
+<h3>Track 1 — Your voice</h3>
+<input type="file" id="vocalFile" accept="audio/*">
+<label>Volume</label>
+<input type="range" id="vocalVolume" min="0" max="1" step=".01" value="1">
+</div>
+
+<div class="track">
+<h3>Track 2 — Your instrumental file</h3>
+<input type="file" id="instrumentFile" accept="audio/*">
+<label>Volume</label>
+<input type="range" id="instrumentVolume" min="0" max="1" step=".01" value=".7">
+</div>
+
+<div class="track">
+<h3>Track 3 — AYANET instrumental</h3>
+<p id="mixerStatus" class="small">Generate an instrumental above first.</p>
+<label>Volume</label>
+<input type="range" id="generatedVolume" min="0" max="1" step=".01" value=".8">
+</div>
+
+<label>Master volume</label>
+<input type="range" id="masterVolume" min="0" max="1" step=".01" value=".9">
+
+<button onclick="playMix()">PLAY FULL MIX</button>
+<button class="secondary" onclick="stopMix()">STOP MIX</button>
+<button class="secondary" onclick="exportMix()">EXPORT FULL MIX WAV</button>
+<div id="mixStatus" class="status"></div>
+</section>
+
+<section>
+<h2>6. SONG ARRANGEMENT</h2>
+<div class="row">
+<div><label>Intro bars</label><input id="introBars" type="number" value="4" min="0"></div>
+<div><label>Verse bars</label><input id="verseBars" type="number" value="16" min="1"></div>
+<div><label>Chorus bars</label><input id="chorusBars" type="number" value="8" min="1"></div>
+<div><label>Outro bars</label><input id="outroBars" type="number" value="4" min="0"></div>
+</div>
+<button onclick="makeArrangement()">CREATE ARRANGEMENT PLAN</button>
+<div id="arrangement" class="status"></div>
+</section>
+
+</main>
+<footer>AYANET MUSIC CREATOR</footer>
+
+<script>
+let audioCtx;
+let generatedBuffer=null;
+let currentPattern=null;
+let recorder=null;
+let recordedChunks=[];
+let loadedTracks={voice:null,instrument:null};
+let mixSources=[];
+
+function ctx(){
+ if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+ if(audioCtx.state==="suspended")audioCtx.resume();
+ return audioCtx;
+}
+
+function saveSong(){
+ const song={
+  title:document.getElementById("songTitle").value.trim()||"Untitled song",
+  genre:document.getElementById("genre").value,
+  mood:document.getElementById("mood").value,
+  lyrics:document.getElementById("lyrics").value
+ };
+ const songs=JSON.parse(localStorage.getItem("ayanetSongs")||"[]");
+ songs.push(song);
+ localStorage.setItem("ayanetSongs",JSON.stringify(songs));
+ document.getElementById("songStatus").textContent="Song idea saved.";
+ showSongs();
+}
+
+function showSongs(){
+ const area=document.getElementById("savedSongs");
+ const songs=JSON.parse(localStorage.getItem("ayanetSongs")||"[]");
+ area.innerHTML="";
+ if(!songs.length){area.textContent="No saved songs yet.";return;}
+ songs.forEach((song,i)=>{
+  const div=document.createElement("div");
+  div.className="saved-item";
+  const title=document.createElement("strong");
+  title.textContent=song.title+" — "+song.genre;
+  const detail=document.createElement("p");
+  detail.textContent=song.mood;
+  const open=document.createElement("button");
+  open.textContent="OPEN";
+  open.onclick=()=>{
+   document.getElementById("songTitle").value=song.title;
+   document.getElementById("genre").value=song.genre;
+   document.getElementById("mood").value=song.mood;
+   document.getElementById("lyrics").value=song.lyrics;
+  };
+  const del=document.createElement("button");
+  del.textContent="DELETE";
+  del.className="secondary";
+  del.onclick=()=>{
+   songs.splice(i,1);
+   localStorage.setItem("ayanetSongs",JSON.stringify(songs));
+   showSongs();
+  };
+  div.append(title,detail,open,del);
+  area.appendChild(div);
+ });
+}
+
+function makePattern(genre,energy,variation){
+ const p={kick:Array(16).fill(0),snare:Array(16).fill(0),
+          hat:Array(16).fill(0),clap:Array(16).fill(0)};
+ const put=(a,steps)=>steps.forEach(s=>a[s]=1);
+ if(genre==="Afrobeat"||genre==="Benga"||genre==="Traditional African"){
+  put(p.kick,[0,6,8,11,14]);put(p.snare,[4,12]);
+  put(p.hat,[0,2,4,6,8,10,12,14]);put(p.clap,[12]);
+ }else if(genre==="Amapiano"){
+  put(p.kick,[0,7,10]);put(p.snare,[4,12]);
+  put(p.hat,[0,2,4,6,8,10,12,14]);put(p.clap,[12]);
+ }else if(genre==="Hip-hop"){
+  put(p.kick,[0,7,10]);put(p.snare,[4,12]);
+  put(p.hat,[0,2,4,6,8,10,12,14]);put(p.clap,[4,12]);
+ }else if(genre==="Reggae"){
+  put(p.kick,[0,8]);put(p.snare,[4,12]);
+  put(p.hat,[0,4,8,12]);put(p.clap,[4,12]);
+ }else if(genre==="Gospel"){
+  put(p.kick,[0,4,8,12]);put(p.snare,[4,12]);
+  put(p.hat,[0,2,4,6,8,10,12,14]);put(p.clap,[4,12]);
+ }else{
+  put(p.kick,[0,8]);put(p.snare,[4,12]);
+  put(p.hat,[0,2,4,6,8,10,12,14]);put(p.clap,[12]);
+ }
+ const chance=energy===1?.18:energy===3?.58:.35;
+ for(let i=0;i<16;i++){
+  if(Math.random()<chance*.3)p.kick[i]=1;
+  if(Math.random()<chance)p.hat[i]=1;
+ }
+ if(variation>=2){
+  [3,7,11,15].forEach(s=>{if(Math.random()<.5)p.hat[s]=1;});
+ }
+ if(variation===3&&Math.random()<.6)p.snare[15]=1;
+ return p;
+}
+
+function drum(type,time,ac,dest){
+ const gain=ac.createGain();
+ if(type==="kick"){
+  const osc=ac.createOscillator();
+  osc.type="sine";
+  osc.frequency.setValueAtTime(140,time);
+  osc.frequency.exponentialRampToValueAtTime(42,time+.16);
+  gain.gain.setValueAtTime(.9,time);
+  gain.gain.exponentialRampToValueAtTime(.001,time+.23);
+  osc.connect(gain);gain.connect(dest);
+  osc.start(time);osc.stop(time+.24);
+ }else{
+  const length=Math.floor(ac.sampleRate*(type==="hat"?.04:.14));
+  const buf=ac.createBuffer(1,length,ac.sampleRate);
+  const data=buf.getChannelData(0);
+  for(let i=0;i<length;i++)data[i]=Math.random()*2-1;
+  const noise=ac.createBufferSource();noise.buffer=buf;
+  const filter=ac.createBiquadFilter();
+  filter.type="highpass";
+  filter.frequency.value=type==="hat"?7000:900;
+  gain.gain.setValueAtTime(type==="hat"?.13:.4,time);
+  gain.gain.exponentialRampToValueAtTime(.001,time+(type==="hat"?.04:.14));
+  noise.connect(filter);filter.connect(gain);gain.connect(dest);
+  noise.start(time);
+ }
+}
+
+const scales={
+ Afrobeat:[0,2,4,7,9],Benga:[0,2,4,7,9],
+ Gospel:[0,2,4,5,7,9,11],Amapiano:[0,3,5,7,10],
+ "Hip-hop":[0,3,5,7,10],"R&B":[0,3,5,7,10],
+ Reggae:[0,2,4,7,9],Pop:[0,2,4,7,9],
+ "Traditional African":[0,2,4,7,9]
+};
+
+function note(ac,dest,time,freq,duration,volume,type){
+ const osc=ac.createOscillator();
+ const gain=ac.createGain();
+ osc.type=type;
+ osc.frequency.setValueAtTime(freq,time);
+ gain.gain.setValueAtTime(.001,time);
+ gain.gain.linearRampToValueAtTime(volume,time+.025);
+ gain.gain.setValueAtTime(volume,time+duration*.65);
+ gain.gain.exponentialRampToValueAtTime(.001,time+duration);
+ osc.connect(gain);gain.connect(dest);
+ osc.start(time);osc.stop(time+duration+.02);
+}
+
+async function createInstrumental(){
+ const genre=document.getElementById("beatGenre").value;
+ const bpm=Math.max(60,Math.min(180,Number(document.getElementById("bpm").value)||110));
+ const energy=Number(document.getElementById("energy").value);
+ const variation=Number(document.getElementById("variation").value);
+ const pattern=makePattern(genre,energy,variation);
+ const bars=8;
+ const beatDuration=60/bpm;
+ const stepDuration=beatDuration/4;
+ const sampleRate=44100;
+ const duration=bars*4*beatDuration;
+ const offline=new OfflineAudioContext(2,Math.ceil(duration*sampleRate),sampleRate);
+ const master=offline.createGain();
+ master.gain.value=.85;
+ master.connect(offline.destination);
+
+ const scale=scales[genre]||scales.Pop;
+ const root=genre==="Gospel"?196:genre==="Hip-hop"?110:130.81;
+ const bassRoots=[0,0,5,7];
+ const melodyNotes=variation===1?[0,2,4,2,0,4,2,0]:
+ variation===2?[0,2,4,7,4,2,4,2,0,4,7,4,2,0,2,4]:
+ [0,4,7,4,2,7,9,7,4,2,0,4,7,9,7,4];
+
+ for(let bar=0;bar<bars;bar++){
+  for(let step=0;step<16;step++){
+   const time=(bar*16+step)*stepDuration;
+   ["kick","snare","hat","clap"].forEach(type=>{
+    if(pattern[type][step])drum(type,time,offline,master);
+   });
+
+   // Automatic bassline: follows the chord movement.
+   if(step===0||step===8||(genre==="Amapiano"&&step===10)){
+    const chord=bassRoots[Math.floor(bar/2)%4];
+    const bassFreq=root*Math.pow(2,chord/12);
+    note(offline,master,time,bassFreq,.34,.32,"triangle");
+   }
+   // Automatic melody: a repeating musical phrase with variation.
+   if(step%2===0){
+    const index=(bar*8+step/2)%melodyNotes.length;
+    const degree=melodyNotes[index];
+    const octave=(bar%2===0)?1:2;
+    const freq=261.63*Math.pow(2,(scale[degree%scale.length]+12*octave)/12);
+    if(variation===1||Math.random()>.25){
+     note(offline,master,time,freq,.2,.105,"sine");
+    }
+   }
+  }
+ }
+ return await offline.startRendering();
+}
+
+async function generateInstrumental(){
+ stopInstrumental();
+ const status=document.getElementById("generatorStatus");
+ status.textContent="AYANET is creating drums, bass and melody...";
+ try{
+  currentPattern=true;
+  generatedBuffer=await createInstrumental();
+  status.textContent="Your instrumental is ready! Drums, bass and melody have been generated.";
+  document.getElementById("mixerStatus").textContent="Your generated instrumental is ready for mixing.";
+ }catch(e){
+  status.textContent="The instrumental could not be generated in this browser. Please try again.";
+ }
+}
+
+let previewSource=null;
+function playInstrumental(){
+ if(!generatedBuffer){
+  document.getElementById("generatorStatus").textContent="Generate an instrumental first.";
+  return;
+ }
+ stopInstrumental();
+ const ac=ctx();
+ previewSource=ac.createBufferSource();
+ previewSource.buffer=generatedBuffer;
+ previewSource.loop=true;
+ previewSource.connect(ac.destination);
+ previewSource.start();
+ document.getElementById("generatorStatus").textContent="Playing your AYANET instrumental.";
+}
+function stopInstrumental(){
+ if(previewSource){
+  try{previewSource.stop();}catch(e){}
+  previewSource=null;
+ }
+}
+
+function wavBlob(buffer){
+ const channels=buffer.numberOfChannels;
+ const length=44+buffer.length*channels*2;
+ const array=new ArrayBuffer(length);
+ const view=new DataView(array);
+ let pos=0;
+ const str=s=>{for(let i=0;i<s.length;i++)view.setUint8(pos++,s.charCodeAt(i));};
+ str("RIFF");view.setUint32(pos,36+buffer.length*channels*2,true);pos+=4;
+ str("WAVE");str("fmt ");view.setUint32(pos,16,true);pos+=4;
+ view.setUint16(pos,1,true);pos+=2;view.setUint16(pos,channels,true);pos+=2;
+ view.setUint32(pos,buffer.sampleRate,true);pos+=4;
+ view.setUint32(pos,buffer.sampleRate*channels*2,true);pos+=4;
+ view.setUint16(pos,channels*2,true);pos+=2;view.setUint16(pos,16,true);pos+=2;
+ str("data");view.setUint32(pos,buffer.length*channels*2,true);pos+=4;
+ const data=[];
+ for(let c=0;c<channels;c++)data.push(buffer.getChannelData(c));
+ for(let i=0;i<buffer.length;i++){
+  for(let c=0;c<channels;c++){
+   const sample=Math.max(-1,Math.min(1,data[c][i]));
+   view.setInt16(pos,sample<0?sample*32768:sample*32767,true);pos+=2;
+  }
+ }
+ return new Blob([array],{type:"audio/wav"});
+}
+
+function downloadBlob(blob,name){
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;a.download=name;a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),3000);
+}
+
+async function downloadInstrumental(){
+ if(!generatedBuffer)await generateInstrumental();
+ if(generatedBuffer){
+  downloadBlob(wavBlob(generatedBuffer),"AYANET-instrumental.wav");
+  document.getElementById("generatorStatus").textContent="Your instrumental WAV has been downloaded.";
+ }
+}
+
+async function startRecording(){
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  recordedChunks=[];
+  recorder=new MediaRecorder(stream);
+  recorder.ondataavailable=e=>{if(e.data.size)recordedChunks.push(e.data);};
+  recorder.onstop=()=>{
+   const blob=new Blob(recordedChunks,{type:recorder.mimeType||"audio/webm"});
+   const url=URL.createObjectURL(blob);
+   const player=document.getElementById("recordedAudio");
+   player.src=url;player.style.display="block";
+   const link=document.getElementById("downloadVoice");
+   link.href=url;link.style.display="inline-block";
+   stream.getTracks().forEach(t=>t.stop());
+   document.getElementById("recordStatus").textContent="Recording ready.";
+  };
+  recorder.start();
+  document.getElementById("recordBtn").disabled=true;
+  document.getElementById("stopRecordBtn").disabled=false;
+  document.getElementById("recordStatus").textContent="Recording...";
+ }catch(e){
+  document.getElementById("recordStatus").textContent="Microphone access was not available. Allow it in Chrome and use HTTPS or localhost.";
+ }
+}
+function stopRecording(){
+ if(recorder&&recorder.state!=="inactive")recorder.stop();
+ document.getElementById("recordBtn").disabled=false;
+ document.getElementById("stopRecordBtn").disabled=true;
+}
+
+function playNote(freq){
+ const ac=ctx();
+ note(ac,ac.destination,ac.currentTime,freq,.6,.2,"triangle");
+}
+
+async function decodeFile(file){
+ if(!file)return null;
+ return await ctx().decodeAudioData(await file.arrayBuffer());
+}
+document.getElementById("vocalFile").addEventListener("change",async e=>{
+ try{loadedTracks.voice=await decodeFile(e.target.files[0]);document.getElementById("mixStatus").textContent="Voice loaded.";}
+ catch(err){document.getElementById("mixStatus").textContent="Could not load voice file.";}
+});
+document.getElementById("instrumentFile").addEventListener("change",async e=>{
+ try{loadedTracks.instrument=await decodeFile(e.target.files[0]);document.getElementById("mixStatus").textContent="Instrumental loaded.";}
+ catch(err){document.getElementById("mixStatus").textContent="Could not load instrumental.";}
+});
+
+function stopMix(){
+ mixSources.forEach(s=>{try{s.stop();}catch(e){}});
+ mixSources=[];
+}
+function mixTrack(buffer,volume,destination,ac){
+ if(!buffer)return;
+ const source=ac.createBufferSource();source.buffer=buffer;
+ const gain=ac.createGain();gain.gain.value=volume;
+ source.connect(gain);gain.connect(destination);
+ source.start();mixSources.push(source);
+}
+async function playMix(){
+ stopMix();
+ if(!loadedTracks.voice&&!loadedTracks.instrument&&!generatedBuffer){
+  document.getElementById("mixStatus").textContent="Add an audio file or generate an instrumental first.";return;
+ }
+ const ac=ctx(),master=ac.createGain();
+ master.gain.value=Number(document.getElementById("masterVolume").value);
+ master.connect(ac.destination);
+ mixTrack(loadedTracks.voice,Number(document.getElementById("vocalVolume").value),master,ac);
+ mixTrack(loadedTracks.instrument,Number(document.getElementById("instrumentVolume").value),master,ac);
+ mixTrack(generatedBuffer,Number(document.getElementById("generatedVolume").value),master,ac);
+ document.getElementById("mixStatus").textContent="Playing your available tracks together.";
+}
+
+async function exportMix(){
+ const tracks=[
+  {buffer:loadedTracks.voice,volume:Number(document.getElementById("vocalVolume").value)},
+  {buffer:loadedTracks.instrument,volume:Number(document.getElementById("instrumentVolume").value)},
+  {buffer:generatedBuffer,volume:Number(document.getElementById("generatedVolume").value)}
+ ].filter(t=>t.buffer);
+ if(!tracks.length){document.getElementById("mixStatus").textContent="Add audio or generate an instrumental first.";return;}
+ document.getElementById("mixStatus").textContent="Preparing your mix WAV...";
+ try{
+  const rate=44100;
+  const duration=Math.max(...tracks.map(t=>t.buffer.duration));
+  const offline=new OfflineAudioContext(2,Math.ceil(duration*rate),rate);
+  const master=offline.createGain();
+  master.gain.value=Number(document.getElementById("masterVolume").value);
+  master.connect(offline.destination);
+  tracks.forEach(t=>{
+   const source=offline.createBufferSource();source.buffer=t.buffer;
+   const gain=offline.createGain();gain.gain.value=t.volume;
+   source.connect(gain);gain.connect(master);source.start();
+  });
+  const result=await offline.startRendering();
+  downloadBlob(wavBlob(result),"AYANET-full-mix.wav");
+  document.getElementById("mixStatus").textContent="Your full mix has been exported.";
+ }catch(e){
+  document.getElementById("mixStatus").textContent="Mix export failed. Check the audio files and try again.";
+ }
+}
+
+function makeArrangement(){
+ const values=["introBars","verseBars","chorusBars","outroBars"].map(id=>Math.max(0,Number(document.getElementById(id).value)||0));
+ const total=values.reduce((a,b)=>a+b,0);
+ document.getElementById("arrangement").textContent=
+ "Intro "+values[0]+" bars → Verse "+values[1]+" bars → Chorus "+values[2]+" bars → Outro "+values[3]+" bars. Total: "+total+" bars.";
+}
+
+showSongs();
+</script>
+</body>
+</html>
+```
